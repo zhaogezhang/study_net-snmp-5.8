@@ -104,6 +104,8 @@ static const char *lib[MAX_CALLBACK_SUBIDS] = {
  * registration/unregistration of other callbacks (eg AgentX
  * subagents do this).
  */
+/* 当前系统支持整个回调函数模块使用一个大锁或者每个回调函数使用独立的小锁两种
+   工作模式，默认情况下使用小锁工作模式 */
 #define LOCK_PER_CALLBACK_SUBID 1
 #ifdef LOCK_PER_CALLBACK_SUBID
 static int _locks[MAX_CALLBACK_IDS][MAX_CALLBACK_SUBIDS];
@@ -175,6 +177,14 @@ _callback_unlock(int major, int minor)
 /*
  * the chicken. or the egg.  You pick. 
  */
+/*********************************************************************************************************
+** 函数名称: init_callbacks
+** 功能描述: 初始化通用回调函数模块相关数据结构
+** 输	 入: 
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 void
 init_callbacks(void)
 {
@@ -234,6 +244,18 @@ init_callbacks(void)
  * @see snmp_call_callbacks
  * @see snmp_unregister_callback
  */
+/*********************************************************************************************************
+** 函数名称: snmp_register_callback
+** 功能描述: 向当前回调函数模块注册指定参数且为默认优先级的回调函数功能指针
+** 输	 入: major - 回调函数主功能号
+**         : minor - 回调函数次功能号
+**         : new_callback - 要注册的回调函数功能指针
+**         : arg - 指定的回调函数参数
+** 输	 出: SNMPERR_SUCCESS - 注册成功
+**         : SNMPERR_GENERR - 注册失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 snmp_register_callback(int major, int minor, SNMPCallback * new_callback,
                        void *arg)
@@ -256,6 +278,19 @@ snmp_register_callback(int major, int minor, SNMPCallback * new_callback,
  *
  * @see snmp_register_callback
  */
+/*********************************************************************************************************
+** 函数名称: netsnmp_register_callback
+** 功能描述: 向当前回调函数模块注册指定参数的回调函数功能指针
+** 输	 入: major - 回调函数主功能号
+**         : minor - 回调函数次功能号
+**         : new_callback - 要注册的回调函数功能指针
+**         : arg - 指定的回调函数参数
+**         : priority - 相同功能号下的优先级
+** 输	 出: SNMPERR_SUCCESS - 注册成功
+**         : SNMPERR_GENERR - 注册失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 netsnmp_register_callback(int major, int minor, SNMPCallback * new_callback,
                           void *arg, int priority)
@@ -316,6 +351,17 @@ netsnmp_register_callback(int major, int minor, SNMPCallback * new_callback,
  * @see snmp_register_callback
  * @see snmp_unregister_callback
  */
+/*********************************************************************************************************
+** 函数名称: snmp_call_callbacks
+** 功能描述: 调用回调函数模块指定主次功能号参数的回调函数功能指针
+** 输	 入: major - 指定的主功能号
+**         : minor - 指定的次功能号
+**         : caller_arg - 指定的回调函数参数
+** 输	 出: SNMPERR_SUCCESS - 调用成功
+**         : SNMPERR_GENERR - 调用失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 snmp_call_callbacks(int major, int minor, void *caller_arg)
 {
@@ -374,6 +420,16 @@ snmp_call_callbacks(int major, int minor, void *caller_arg)
 }
 
 #ifndef NETSNMP_FEATURE_REMOVE_CALLBACK_COUNT
+/*********************************************************************************************************
+** 函数名称: snmp_count_callbacks
+** 功能描述: 判断回调函数模块指定主次功能号位置处注册了多少个回调函数功能指针
+** 输	 入: major - 指定的主功能号
+**         : minor - 指定的次功能号
+** 输	 出: count - 注册的回调函数功能指针个数
+**         : SNMPERR_GENERR - 参数错误
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 snmp_count_callbacks(int major, int minor)
 {
@@ -395,6 +451,16 @@ snmp_count_callbacks(int major, int minor)
 }
 #endif /* NETSNMP_FEATURE_REMOVE_CALLBACK_COUNT */
 
+/*********************************************************************************************************
+** 函数名称: snmp_callback_available
+** 功能描述: 判断回调函数模块指定主次功能号位置处是否注册了可用的回调函数功能指针
+** 输	 入: major - 指定的主功能号
+**         : minor - 指定的次功能号
+** 输	 出: SNMPERR_SUCCESS - 有可用的回调函数功能指针
+**         : SNMPERR_GENERR - 没有可用的回调函数功能指针
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 snmp_callback_available(int major, int minor)
 {
@@ -437,7 +503,19 @@ snmp_callback_available(int major, int minor)
  * @see snmp_register_callback
  * @see snmp_call_callbacks
  */
-
+/*********************************************************************************************************
+** 函数名称: snmp_unregister_callback
+** 功能描述: 从回调函数模块中移除指定主次功能号位置处指定参数的回调函数功能指针
+** 输	 入: major - 指定的主功能号
+**         : minor - 指定的次功能号
+**         : target - 需要移除的功能函数指针
+**         : arg - 需要移除的功能函数的 client_arg 参数
+**         : matchargs - 表示移除的函数功能指针是否需要匹配指定的 client_arg 参数
+** 输	 出: count - 成功移除的回调函数功能指针个数
+**         : SNMPERR_GENERR - 移除失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 snmp_unregister_callback(int major, int minor, SNMPCallback * target,
                          void *arg, int matchargs)
@@ -497,6 +575,16 @@ snmp_unregister_callback(int major, int minor, SNMPCallback * target,
  * @param i    callback id to start at
  * @param j    callback subid to start at
  */
+/*********************************************************************************************************
+** 函数名称: netsnmp_callback_clear_client_arg
+** 功能描述: 根据指定的参数从当前回调函数功能模块中查找匹配的成员个数并设置这个成员的 client_arg 为 NULL
+** 输	 入: ptr - 需要匹配的回调函数指针
+**         : i - 指定的起始主功能号
+**         : j - 指定的起始次功能号
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 netsnmp_callback_clear_client_arg(void *ptr, int i, int j)
 {
@@ -532,6 +620,14 @@ netsnmp_callback_clear_client_arg(void *ptr, int i, int j)
     return rc;
 }
 
+/*********************************************************************************************************
+** 函数名称: clear_callback
+** 功能描述: 释放当前回调函数模块中注册的所有回调函数
+** 输	 入: 
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 void
 clear_callback(void)
 {
@@ -576,6 +672,14 @@ clear_callback(void)
 }
 
 #ifndef NETSNMP_FEATURE_REMOVE_CALLBACK_LIST
+/*********************************************************************************************************
+** 函数名称: snmp_callback_list
+** 功能描述: 从当前回调函数模块中获取指定主次功能号的回调函数功能指针列表
+** 输	 入: 
+** 输	 出: snmp_gen_callback - 成功获取的回调函数功能指针列表头
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 struct snmp_gen_callback *
 snmp_callback_list(int major, int minor)
 {

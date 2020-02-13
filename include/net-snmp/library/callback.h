@@ -44,7 +44,12 @@ extern          "C" {
     struct snmp_gen_callback {
         SNMPCallback   *sc_callback;
         void           *sc_client_arg;
+
+		/* 当指定的回调函数主次功能号相同的时候指定的优先级参数 */
         int             priority;
+
+		/* 当指定的回调函数主次功能号相同的时候，会把这些回调函数通过链表的方式连接
+		   起来，并以优先级为键值、按照升序方式进行排列 */
         struct snmp_gen_callback *next;
     };
 
