@@ -296,8 +296,10 @@ init_agent(const char *app)
     r = init_kmem("/dev/kmem") ? 0 : -EACCES;
 #endif
 
+    /* 创建并初始化当前系统使用的基础 oid 树形结构数据并初始化相关 DS 数据 */
     setup_tree();
 
+    /* 初始化当前 agent 使用的配置信息处理函数结构 */
     init_agent_read_config(app);
 
 #ifdef TESTING

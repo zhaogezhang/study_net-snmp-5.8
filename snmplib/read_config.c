@@ -17,6 +17,7 @@
  *
  * The read_config related functions are a fairly extensible  system  of
  * parsing various configuration files at the run time.
+ * read_config 相关函数是一个相当可扩展的系统，可以在运行时解析各种配置文件.
  *
  * The idea is that the calling application is able to register
  * handlers for certain tokens specified in certain types
@@ -24,6 +25,9 @@
  * to  look  for all the files that it has registrations for,
  * find the first word on each line, and pass  the  remainder
  * to the appropriately registered handler.
+ * 其思想是，应用程序能够为特定类型文件中指定的 tokens 注册处理程序。然后
+ * 可以调用 read_configs 函数来查找它已注册的所有文件，查找每一行的第一个
+ * 单词，并将其余的传递给与其对应的注册的处理程序.
  *
  * For persistent configuration storage you will need to use the
  * read_config_read_data, read_config_store, and read_config_store_data
@@ -31,9 +35,13 @@
  * callback so when the agent shutsdown for whatever reason data is written
  * to your configuration files.  The following explains in more detail the
  * sequence to make this happen.
+ * 对于持久性配置存储，您需要使用 read_config_read_data、read_config_store
+ * 和 read_config_store_data api，并首先注册一个回调，以便当代理出于某种原
+ * 因关闭时，将数据写入配置文件。下面将更详细地解释实现这一过程的顺序：
  *
  * This is the callback registration API, you need to call this API with
  * the appropriate parameters in order to configure persistent storage needs.
+ * 这是一个回调注册API，你需要使用适当的参数来调用这个API来配置持久的存储需求.
  *
  *        int snmp_register_callback(int major, int minor,
  *                                   SNMPCallback *new_callback,
@@ -51,9 +59,14 @@
  * transfer all your state from memory to disk. You do this by generating
  * configuration lines into a buffer.  The lines are of the form token
  * followed by token parameters.
+ * majorID、minorID 和 clientarg 是在上面的回调注册中传递的。当回调被调用时
+ * 您必须将所有状态从内存传输到磁盘。您可以通过在缓冲区中生成配置行来实现这
+ * 一点。这些行的格式是：token   token parameters.
  * 
  * Finally storing is done using read_config_store(type, buffer);
  * type is the application name this can be obtained from:
+ * 最后，使用 read_config_store(type, buffer) 进行存储;类型是应用程序的名称
+ * 可以通过下面的函数获取：
  *
  * netsnmp_ds_get_string(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_APPTYPE);
  *
@@ -61,6 +74,9 @@
  * for your token using the register_config_handler function. Your
  * handler will be invoked and you can parse in the data using the
  * read_config_read APIs.
+ * 现在，开始读回数据:这是通过使用 register_config_handler 函数为你的 token 
+ * 注册一个配置处理程序来完成的。你的处理程序将被调用并且你可以使用 read_config_read
+ * api 解析数据.
  *
  *  @{
  */
@@ -158,7 +174,20 @@ static int      config_errors;
 
 struct config_files *config_files = NULL;
 
-
+/*********************************************************************************************************
+** 函数名称: internal_register_config_handler
+** 功能描述: 为指定的配置文件指定的 token 注册一组配置信息处理函数
+** 输	 入: type_param - 表示文配置文件类型
+**         : token - 指定的配置 token
+**         : parser - 解析配置信息函数指针
+**         : releaser - 释放在 parser 函数中申请的资源函数指针
+**         : help - 打印配置信息帮助信息
+**         : when - 指定的配置时间信息，例如 NORMAL_CONFIG
+** 输	 出: *ltmp - 成功注册的配置信息处理函数组
+**         : NULL - 注册失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 static struct config_line *
 internal_register_config_handler(const char *type_param,
 				 const char *token,
@@ -251,6 +280,19 @@ internal_register_config_handler(const char *type_param,
 
 }                               /* end register_config_handler() */
 
+/*********************************************************************************************************
+** 函数名称: register_prenetsnmp_mib_handler
+** 功能描述: 为指定的配置文件指定的 token 注册一组 PREMIB_CONFIG 类型的配置信息处理函数
+** 输	 入: type_param - 表示文配置文件类型
+**         : token - 指定的配置 token
+**         : parser - 解析配置信息函数指针
+**         : releaser - 释放在 parser 函数中申请的资源函数指针
+**         : help - 打印配置信息帮助信息
+** 输	 出: *ltmp - 成功注册的配置信息处理函数组
+**         : NULL - 注册失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/		 
 struct config_line *
 register_prenetsnmp_mib_handler(const char *type,
                                 const char *token,
@@ -306,6 +348,19 @@ register_app_prenetsnmp_mib_handler(const char *token,
  *
  * @return Pointer to a new config line entry or NULL on error.
  */
+/*********************************************************************************************************
+** 函数名称: register_prenetsnmp_mib_handler
+** 功能描述: 为指定的配置文件指定的 token 注册一组 NORMAL_CONFIG 类型的配置信息处理函数
+** 输	 入: type_param - 表示文配置文件类型，如果配置文件为 snmp.conf，则 type_param = "snmp"
+**         : token - 指定的配置 token
+**         : parser - 解析配置信息函数指针
+**         : releaser - 释放在 parser 函数中申请的资源函数指针
+**         : help - 打印配置信息帮助信息
+** 输	 出: *ltmp - 成功注册的配置信息处理函数组
+**         : NULL - 注册失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 struct config_line *
 register_config_handler(const char *type,
 			const char *token,
@@ -316,6 +371,19 @@ register_config_handler(const char *type,
 					    help, NORMAL_CONFIG);
 }
 
+/*********************************************************************************************************
+** 函数名称: register_prenetsnmp_mib_handler
+** 功能描述: 为指定的配置文件指定的 token 注册一组 NORMAL_CONFIG 类型的配置信息处理函数
+** 输	 入: type_param - 表示文配置文件类型，如果配置文件为 snmp.conf，则 type_param = "snmp"
+**         : token - 指定的配置 token
+**         : parser - 解析配置信息函数指针，这个函数指针为 const 类型
+**         : releaser - 释放在 parser 函数中申请的资源函数指针
+**         : help - 打印配置信息帮助信息
+** 输	 出: *ltmp - 成功注册的配置信息处理函数组
+**         : NULL - 注册失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 struct config_line *
 register_const_config_handler(const char *type,
                               const char *token,
@@ -328,6 +396,19 @@ register_const_config_handler(const char *type,
 					    help, NORMAL_CONFIG);
 }
 
+/*********************************************************************************************************
+** 函数名称: register_app_config_handler
+** 功能描述: 为当前 app 配置文件中指定的 token 注册一组 NORMAL_CONFIG 类型的配置信息处理函数
+** 输	 入: NULL - 表示 type_param 等于 \<application\>.conf
+**         : token - 指定的配置 token
+**         : parser - 解析配置信息函数指针
+**         : releaser - 释放在 parser 函数中申请的资源函数指针
+**         : help - 打印配置信息帮助信息
+** 输	 出: *ltmp - 成功注册的配置信息处理函数组
+**         : NULL - 注册失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 struct config_line *
 register_app_config_handler(const char *token,
                             void (*parser) (const char *, char *),
@@ -479,6 +560,15 @@ print_config_handlers(void)
 static unsigned int  linecount;
 static const char   *curfilename;
 
+/*********************************************************************************************************
+** 函数名称: read_config_get_handlers
+** 功能描述: 从当前系统内查找和指定配置文件名匹配的配置项处理函数集
+** 输	 入: type - 指定的配置文件名
+** 输	 出: ctmp->start - 配置文件配置项处理函数集指针
+**         : NULL - 获取失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 struct config_line *
 read_config_get_handlers(const char *type)
 {
@@ -490,6 +580,17 @@ read_config_get_handlers(const char *type)
     return NULL;
 }
 
+/*********************************************************************************************************
+** 函数名称: read_config_with_type_when
+** 功能描述: 读取指定的配置文件数据并根据指定的文件类型和配置时间参数处理这个文件的配置数据
+** 输	 入: filename - 指定的配置文件名
+**         : type - 指定的文件类型
+**         : when - 指定的配置时间，例如 NORMAL_CONFIG
+** 输	 出: SNMPERR_SUCCESS - 执行成功
+**         : SNMPERR_GENERR - 执行失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 read_config_with_type_when(const char *filename, const char *type, int when)
 {
@@ -503,13 +604,32 @@ read_config_with_type_when(const char *filename, const char *type, int when)
     return SNMPERR_GENERR;     /* No config files read */
 }
 
+/*********************************************************************************************************
+** 函数名称: read_config_with_type
+** 功能描述: 读取指定的配置文件数据并根据指定的文件类型参数处理这个文件的配置数据
+** 输	 入: filename - 指定的配置文件名
+**         : type - 指定的文件类型
+** 输	 出: ctmp->start - 配置文件配置项处理函数集指针
+**         : NULL - 获取失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 read_config_with_type(const char *filename, const char *type)
 {
     return read_config_with_type_when(filename, type, EITHER_CONFIG);
 }
 
-
+/*********************************************************************************************************
+** 函数名称: read_config_find_handler
+** 功能描述: 从指定的配置文件配置项处理函数集列表中查找和指定配置项 token 匹配的数据处理函数集
+** 输	 入: line_handlers - 指定的配置项处理函数集列表
+**         : token - 指定配置项 token
+** 输	 出: lptr - 找到的数据项处理函数集
+**         : NULL - 查找失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 struct config_line *
 read_config_find_handler(struct config_line *line_handlers,
                          const char *token)
@@ -528,12 +648,28 @@ read_config_find_handler(struct config_line *line_handlers,
 /*
  * searches a config_line linked list for a match 
  */
+/*********************************************************************************************************
+** 函数名称: run_config_handler
+** 功能描述: 从指定的配置文件配置项处理函数集列表中查找和指定配置项 token 匹配的数据处理函数集并运行
+**         : 相应的配置项数据处理函数处理配置项数据
+** 输	 入: lptr - 指定的配置项处理函数集列表
+**         : token - 指定的配置项 token
+**         : cptr - 指定的配置项数据
+**         : when - 指定的配置时间，例如 NORMAL_CONFIG
+** 输	 出: SNMPERR_SUCCESS - 运行成功
+**         : SNMPERR_GENERR - 运行失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 run_config_handler(struct config_line *lptr,
                    const char *token, char *cptr, int when)
 {
     char           *cp;
+
+	/* 从指定的配置文件配置项处理函数集列表中查找和指定配置项 token 匹配的数据处理函数集 */
     lptr = read_config_find_handler(lptr, token);
+	
     if (lptr != NULL) {
         if (when == EITHER_CONFIG || lptr->config_time == when) {
             char tmpbuf[1];
@@ -574,6 +710,8 @@ run_config_handler(struct config_line *lptr,
  * known configuration handlers for all registered types.  May produce
  * inconsistent results when multiple tokens of the same name are
  * registered under different file types. 
+ * 获取任意字符串，并根据所有已注册类型的已知配置处理程序对其进行处理。
+ * 当在不同的文件类型下注册多个相同名称的令牌时，可能会产生不一致的结果
  */
 
 /*
@@ -581,6 +719,17 @@ run_config_handler(struct config_line *lptr,
  */
 #define SNMP_CONFIG_DELIMETERS " \t="
 
+/*********************************************************************************************************
+** 函数名称: snmp_config_when
+** 功能描述: 根据指定的配置信息（指定的配置文件类型）从当前系统内查找和其匹配的配置项处理函数
+**         : 并运行这个函数来处理这个配置项数据
+** 输	 入: line - 指定的配置信息
+**         : when - 指定的配置时间，例如 NORMAL_CONFIG
+** 输	 出: SNMPERR_SUCCESS - 运行成功
+**         : SNMPERR_GENERR - 运行失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 snmp_config_when(char *line, int when)
 {
@@ -680,6 +829,18 @@ netsnmp_config_remember_free_list(struct read_config_memory **mem)
     }
 }
 
+/*********************************************************************************************************
+** 函数名称: netsnmp_config_process_memory_list
+** 功能描述: 根据指定的内存配置信息（指定的配置文件类型）从当前系统内查找和其匹配的配置项处理函数
+**         : 并运行这个函数来处理这个配置项数据
+** 输	 入: memp - 指定的内存配置信息
+**         : when - 指定的配置时间，例如 NORMAL_CONFIG
+**         : clear - 是否需要释放指定的内存配置信息
+** 输	 出: SNMPERR_SUCCESS - 运行成功
+**         : SNMPERR_GENERR - 运行失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 void
 netsnmp_config_process_memory_list(struct read_config_memory **memp,
                                    int when, int clear)
@@ -719,6 +880,18 @@ netsnmp_config_process_memories(void)
     netsnmp_config_process_memory_list(&memorylist, EITHER_CONFIG, 1);
 }
 
+/*********************************************************************************************************
+** 函数名称: netsnmp_config_process_memories_when
+** 功能描述: 根据 memorylist 指定的内存配置信息（指定的配置文件类型）从当前系统内查找和其匹配的
+**         : 配置项处理函数并运行这个函数来处理这个配置项数据
+** 输	 入: memp - 指定的内存配置信息
+**         : when - 指定的配置时间，例如 NORMAL_CONFIG
+**         : clear - 是否需要释放指定的内存配置信息
+** 输	 出: SNMPERR_SUCCESS - 运行成功
+**         : SNMPERR_GENERR - 运行失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 void
 netsnmp_config_process_memories_when(int when, int clear)
 {
@@ -749,6 +922,17 @@ netsnmp_config_process_memories_when(int when, int clear)
  *    Note that individual config token errors do not trigger SNMPERR_GENERR
  *    It's only if the whole file cannot be processed for some reason.
  */
+/*********************************************************************************************************
+** 函数名称: read_config
+** 功能描述: 读取指定的配置文件数据并根据指定的配置项数据处理函数集处理这个文件的配置数据
+** 输	 入: filename - 指定的配置文件名
+**         : line_handler - 指定的配置项数据处理函数集
+**         : when - 指定的配置时间，例如 NORMAL_CONFIG
+** 输	 出: SNMPERR_SUCCESS - 执行成功
+**         : SNMPERR_GENERR - 执行失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 read_config(const char *filename,
             struct config_line *line_handler, int when)
@@ -828,6 +1012,8 @@ read_config(const char *filename,
                     return SNMPERR_GENERR;
                 }
             }
+
+			/* 获取配置文件中的一行数据，即一个配置项 */
             if (fgets(line + linelen, linesize - linelen, ifile) == NULL) {
                 line[linelen] = '\0';
                 fclose (ifile);
@@ -1005,6 +1191,16 @@ free_config(void)
  * Return SNMPERR_GENERR if _no_ config files are processed
  *    Whether this is actually an error is left to the application
  */
+/*********************************************************************************************************
+** 函数名称: read_configs_optional
+** 功能描述: 读取指定的配置文件数据并根据指定的文件类型和配置时间参数处理这个文件的配置数据
+** 输	 入: optional_config - 用来指定配置文件名列表，多个文件名用 "," 分隔
+**         : when - 指定的配置时间，例如 NORMAL_CONFIG
+** 输	 出: SNMPERR_SUCCESS - 执行成功
+**         : SNMPERR_GENERR - 执行失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 read_configs_optional(const char *optional_config, int when)
 {
@@ -1041,6 +1237,14 @@ read_configs_optional(const char *optional_config, int when)
     return ret;
 }
 
+/*********************************************************************************************************
+** 函数名称: read_premib_configs
+** 功能描述: 读取并处理当前系统内和 NORMAL_CONFIG 相关的配置文件中的配置项数据
+** 输	 入: 
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 void
 read_configs(void)
 {
@@ -1073,6 +1277,14 @@ read_configs(void)
                         SNMP_CALLBACK_POST_READ_CONFIG, NULL);
 }
 
+/*********************************************************************************************************
+** 函数名称: read_premib_configs
+** 功能描述: 读取并处理当前系统内和 PREMIB_CONFIG 相关的配置文件中的配置项数据
+** 输	 入: 
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 void
 read_premib_configs(void)
 {
@@ -1430,6 +1642,15 @@ read_config_files_of_type(int when, struct config_files *ctmp)
  * Return SNMPERR_GENERR if _no_ config files are processed
  *    Whether this is actually an error is left to the application
  */
+/*********************************************************************************************************
+** 函数名称: read_config_files
+** 功能描述: 读取 config_files 文件列表中指定的配置文件数据并根据指定的配置时间参数处理这个文件的配置数据
+** 输	 入: when - 指定的配置时间，例如 NORMAL_CONFIG
+** 输	 出: SNMPERR_SUCCESS - 执行成功
+**         : SNMPERR_GENERR - 执行失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 read_config_files(int when) {
 
@@ -1500,7 +1721,16 @@ read_config_print_usage(const char *lead)
  * configuration file
  *      
  * @return void
-  */
+ */
+/*********************************************************************************************************
+** 函数名称: read_config_store
+** 功能描述: 向指定的配置文件类型中写入指定的配置项数据
+** 输	 入: type - 指定的配置文件类型，例如配置文件名
+**         : line - 需要写入的配置项数据
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 void
 read_config_store(const char *type, const char *line)
 {

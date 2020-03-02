@@ -122,6 +122,14 @@ static netsnmp_container * filtered = NULL;
 void netsnmp_transport_parse_filter(const char *word, char *cptr);
 #endif /* NETSNMP_FEATURE_REMOVE_FILTER_SOURCE */
 
+/*********************************************************************************************************
+** 函数名称: init_snmp_transport
+** 功能描述: 为当前系统注册和数据包过滤模块相关的配置文件的配置项的处理函数
+** 输	 入: 
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 void
 init_snmp_transport(void)
 {
@@ -290,6 +298,15 @@ static int _transport_filter_init(void)
     return 0;
 }
 
+/*********************************************************************************************************
+** 函数名称: netsnmp_transport_filter_add
+** 功能描述: 向当前系统地址过滤表中添加一个新的过滤地址
+** 输	 入: addrtxt - 需要添加的新的过滤地址
+** 输	 出: 0 - 添加成功
+**         : -1 - 添加失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 netsnmp_transport_filter_add(const char *addrtxt)
 {
@@ -337,6 +354,15 @@ netsnmp_transport_filter_check(const char *addrtxt)
     return addr ? 1 : 0;
 }
 
+/*********************************************************************************************************
+** 函数名称: netsnmp_transport_parse_filterType
+** 功能描述: 解析数据包过滤类型配置项数据的处理函数
+** 输	 入: word - 配置项 token
+**         : cptr - 配置项数据
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 void
 netsnmp_transport_parse_filterType(const char *word, char *cptr)
 {
@@ -357,6 +383,15 @@ netsnmp_transport_parse_filterType(const char *word, char *cptr)
     }
 }
 
+/*********************************************************************************************************
+** 函数名称: netsnmp_transport_parse_filter
+** 功能描述: 解析数据包过滤地址配置项数据的处理函数
+** 输	 入: word - 配置项 token
+**         : cptr - 配置项数据
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 void
 netsnmp_transport_parse_filter(const char *word, char *cptr)
 {

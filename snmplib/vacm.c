@@ -82,6 +82,14 @@ static struct vacm_groupEntry *groupList = NULL, *groupScanPtr = NULL;
  * Specifically:
  *  - adds a set of enums mapping view numbers to human readable names
  */
+/*********************************************************************************************************
+** 函数名称: init_vacm
+** 功能描述: 向当前系统内添加和 vacm 相关的 enum 数据项，增强数据可读性（把数组映射成字符串）
+** 输	 入: 
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 void
 init_vacm(void)
 {

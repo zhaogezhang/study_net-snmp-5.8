@@ -20,11 +20,15 @@
               whole  bunch  of globally accessible variables or a
               whole bunch of access functions to work  with  more
               privately restricted variables.
+              创建一个全局存储空间，而不需要创建一大堆全局可访问
+              变量或一大堆访问函数来处理更多的私有限制变量.
 
        2)     To provide a single location where the thread lock-
               ing needs to be implemented. At the  time  of  this
               writing,  however,  thread  locking  is  not yet in
               place.
+              如果提供单一的访问位置需要实现线程锁。然而，在撰写本
+              文时线程锁还没有实现.
 
        3)     To reduce the number of cross dependencies  between
               code  pieces that may or may not be linked together
@@ -32,6 +36,11 @@
               tion  in which configuration data, for example, can
               be stored for a separate section of code  that  may
               not be linked in to the application in question.
+              以减少代码片段之间的相互依赖关系的数量，这些代码片段
+              可能长期链接在一起，也可能长期不链接在一起。这为配置
+              数据提供了一个单独的位置，例如，可以将配置数据存储在
+              一个单独的代码段中，这个代码段可能没有链接到相关的应
+              用程序.
 
        The functions defined here implement these goals.
 
@@ -179,6 +188,7 @@ typedef struct netsnmp_ds_read_config_s {
 
 static netsnmp_ds_read_config *netsnmp_ds_configs = NULL;
 
+/* 用来存储 DS 数据的内存空间 */
 static int   netsnmp_ds_integers[NETSNMP_DS_MAX_IDS][NETSNMP_DS_MAX_SUBIDS];
 static char  netsnmp_ds_booleans[NETSNMP_DS_MAX_IDS][NETSNMP_DS_MAX_SUBIDS/8];
 static char *netsnmp_ds_strings[NETSNMP_DS_MAX_IDS][NETSNMP_DS_MAX_SUBIDS];
@@ -374,6 +384,15 @@ netsnmp_ds_parse_boolean(char *line)
     }
 }
 
+/*********************************************************************************************************
+** 函数名称: netsnmp_ds_handle_config
+** 功能描述: 用来处理当前系统内和 DS 相关的配置文件中的配置项数据
+** 输	 入: token - 当前配置项的 token
+**         : line - 当前配置项的“配置值”内容
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 void
 netsnmp_ds_handle_config(const char *token, char *line)
 {
@@ -435,7 +454,20 @@ netsnmp_ds_handle_config(const char *token, char *line)
     }
 }
 
-
+/*********************************************************************************************************
+** 函数名称: netsnmp_ds_register_config
+** 功能描述: 为指定的配置文件指定的 token 注册一组 NORMAL_CONFIG 类型的配置信息处理函数，这些配置信息
+**         : 处理函数会根据指定的配置文件内容初始化 DS 存储空间中相关配置变量值
+** 输	 入: type - ASN.1 格式的数据类型
+**         : ftype - 配置文件类型
+**         : token - 配置项 token
+**         : storeid - DS 存储项的主功能参数
+**         : which - DS 存储项的次功能参数
+** 输	 出: SNMPERR_SUCCESS - 注册成功
+**         : SNMPERR_GENERR - 注册失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 netsnmp_ds_register_config(u_char type, const char *ftype, const char *token,
 			   int storeid, int which)
@@ -486,6 +518,20 @@ netsnmp_ds_register_config(u_char type, const char *ftype, const char *token,
     return SNMPERR_SUCCESS;
 }
 
+/*********************************************************************************************************
+** 函数名称: netsnmp_ds_register_premib
+** 功能描述: 为指定的配置文件指定的 token 注册一组 PREMIB_CONFIG 类型的配置信息处理函数，这些配置信息
+**         : 处理函数会根据指定的配置文件内容初始化 DS 存储空间中相关配置变量值
+** 输	 入: type - ASN.1 格式的数据类型
+**         : ftype - 配置文件类型
+**         : token - 配置项 token
+**         : storeid - DS 存储项的主功能参数
+**         : which - DS 存储项的次功能参数
+** 输	 出: SNMPERR_SUCCESS - 注册成功
+**         : SNMPERR_GENERR - 注册失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 netsnmp_ds_register_premib(u_char type, const char *ftype, const char *token,
 			   int storeid, int which)

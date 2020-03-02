@@ -52,6 +52,14 @@ static struct snmp_enum_list_str *sliststorage;
 static void
 free_enum_list(struct snmp_enum_list *list);
 
+/*********************************************************************************************************
+** 函数名称: init_snmp_enum
+** 功能描述: 初始化当前系统的 enum 功能模块，可以用来增强数据可读性（把数组映射成字符串）
+** 输	 入: 
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 init_snmp_enum(const char *type)
 {
@@ -79,6 +87,18 @@ init_snmp_enum(const char *type)
     return SE_OK;
 }
 
+/*********************************************************************************************************
+** 函数名称: se_store_in_list
+** 功能描述: 向函数参数指定位置处插入一个新的 enum 数据项
+** 输	 入: new_list - 待插入的 enum 数据项 
+**         : major - 主位置号
+**         : minor - 次位置号
+** 输	 出: SE_OK - 插入成功
+**         : SE_NOMEM - 指定位置越界
+**         : SE_ALREADY_THERE - 指定位置已经存储 enum 数据项
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 se_store_in_list(struct snmp_enum_list *new_list,
               unsigned int major, unsigned int minor)
@@ -101,6 +121,15 @@ se_store_in_list(struct snmp_enum_list *new_list,
     return ret;
 }
 
+/*********************************************************************************************************
+** 函数名称: se_read_conf
+** 功能描述: 用来处理和当前系统 enum 模块相关配置文件的配置项的数据
+** 输	 入: word - 配置项的 token
+**         : cptr - 配置项的数据
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 void
 se_read_conf(const char *word, const char *cptr)
 {
@@ -162,6 +191,16 @@ se_read_conf(const char *word, const char *cptr)
     }
 }
 
+/*********************************************************************************************************
+** 函数名称: se_store_enum_list
+** 功能描述: 把指定的 enum 链表数据组装成一个字符串存储到指定的配置文件中
+** 输	 入: new_list - 指定的 enum 链表
+**         : token - 为需要存储的 enum 链表指定的配置项 token
+**         : type - 指定的配置文件类型，例如配置文件名
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 void
 se_store_enum_list(struct snmp_enum_list *new_list,
                    const char *token, const char *type)
@@ -287,6 +326,18 @@ se_find_label(unsigned int major, unsigned int minor, int value)
     return se_find_label_in_list(se_find_list(major, minor), value);
 }
 
+/*********************************************************************************************************
+** 函数名称: se_add_pair_to_slist
+** 功能描述: 向当前系统的 enum 模块的指定的链表中添加一个新的 enum 数据项
+** 输	 入: list - 指定的 enum 链表指针
+**         : label - 新的数据项的变量名
+**         : value - 新的数据项的变量值
+** 输	 出: SE_OK - 添加成功
+**         : SE_ALREADY_THERE - 指定的数据项已经存在
+**         : SE_NOMEM - 添加失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 se_add_pair_to_list(struct snmp_enum_list **list, char *label, int value)
 {
@@ -383,6 +434,18 @@ se_find_free_value_in_slist(const char *listname)
 }
 #endif /* NETSNMP_FEATURE_REMOVE_SE_FIND_FREE_VALUE_IN_SLIST */
 
+/*********************************************************************************************************
+** 函数名称: se_add_pair_to_slist
+** 功能描述: 向当前系统的 enum 模块的指定名字的链表中添加一个新的 enum 数据项
+** 输	 入: listname - 指定的 enum 链表名
+**         : label - 新的数据项的变量名
+**         : value - 新的数据项的变量值
+** 输	 出: SE_OK - 添加成功
+**         : SE_ALREADY_THERE - 指定的数据项已经存在
+**         : SE_NOMEM - 添加失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 se_add_pair_to_slist(const char *listname, char *label, int value)
 {

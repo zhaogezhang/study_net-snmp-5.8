@@ -117,6 +117,7 @@ netsnmp_log_handler *logh_priorities[LOG_DEBUG+1];
 static int  logh_enabled = 0;
 
 #ifndef NETSNMP_FEATURE_REMOVE_LOGGING_SYSLOG
+/* 用来存储当前系统使用的 log 名称 */
 static char syslogname[64] = DEFAULT_LOG_ID;
 #endif /* NETSNMP_FEATURE_REMOVE_LOGGING_SYSLOG */
 
@@ -164,6 +165,14 @@ parse_config_logOption(const char *token, char *cptr)
   snmp_log_options( cptr, my_argc, my_argv );
 }
 
+/*********************************************************************************************************
+** 函数名称: init_snmp_logging
+** 功能描述: 为当前系统注册和 logging 模块相关的配置文件的配置项的处理函数
+** 输	 入: 
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 void
 init_snmp_logging(void)
 {
@@ -530,6 +539,14 @@ snmp_log_options(char *optarg, int argc, char *const *argv)
 }
 
 #ifndef NETSNMP_FEATURE_REMOVE_LOGGING_SYSLOG
+/*********************************************************************************************************
+** 函数名称: snmp_log_syslogname
+** 功能描述: 设置当前 snmp 系统使用的 log 名称
+** 输	 入: pstr - 指定的系统 log 名称
+** 输	 出: syslogname - 当前系统使用的 log 名称
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 char *
 snmp_log_syslogname(const char *pstr)
 {

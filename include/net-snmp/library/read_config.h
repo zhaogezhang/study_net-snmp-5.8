@@ -40,7 +40,7 @@ extern          "C" {
         void            (*parse_line) (const char *, char *);
         void            (*free_func) (void);
         struct config_line *next;
-        char            config_time;    /* {NORMAL,PREMIB,EITHER}_CONFIG */
+        char            config_time;    /* {NORMAL,PREMIB,EITHER}_CONFIG  NORMAL_CONFIG */
         char           *help;
     };
 

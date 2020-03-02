@@ -945,6 +945,14 @@ get_enginetime_alarm(unsigned int regnum, void *clientargs)
  * Set parsing functions for config file tokens.
  * Initialize SNMP Crypto API (SCAPI).
  */
+/*********************************************************************************************************
+** 函数名称: init_snmpv3
+** 功能描述: 为当前系统注册和 snmpv3 模块相关的配置文件的配置项的处理函数
+** 输	 入: 
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 void
 init_snmpv3(const char *type)
 {
