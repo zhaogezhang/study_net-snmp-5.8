@@ -42,6 +42,15 @@ clone_scalar_group(netsnmp_scalar_group* src)
  *  @ingroup leaf
  *  @{
  */
+/*********************************************************************************************************
+** 函数名称: netsnmp_get_scalar_group_handler
+** 功能描述: 根据函数参数创建并初始化一个 scalar_group mib handler 结构
+** 输	 入: first - 指定的第一个成员编号
+**         : last - 指定的最后一个成员编号
+** 输	 出: ret - 创建并初始化的 scalar_group mib handler 结构指针
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 netsnmp_mib_handler *
 netsnmp_get_scalar_group_handler(oid first, oid last)
 {
@@ -67,6 +76,17 @@ netsnmp_get_scalar_group_handler(oid first, oid last)
     return ret;
 }
 
+/*********************************************************************************************************
+** 函数名称: netsnmp_register_scalar_group
+** 功能描述: 注册一个 scalar_group 对象节点
+** 输	 入: reginfo - net-snmp 对象节点指针
+**         : first - 第一个成员编号
+**         : last - 最后一个成员编号
+** 输	 出: MIB_REGISTERED_OK - 注册成功
+**         : MIB_REGISTRATION_FAILED - 注册失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 netsnmp_register_scalar_group(netsnmp_handler_registration *reginfo,
                               oid first, oid last)

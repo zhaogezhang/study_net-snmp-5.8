@@ -207,9 +207,14 @@ extern          "C" {
          */
         netsnmp_agent_request_info *reqinfo;
         netsnmp_request_info *requests;
+
+		/* 表示当前 snmp 会话中包含的 mib 树形结构子节点数据 */
         netsnmp_tree_cache *treecache;
+
+		/* 表示当前 snmp 会话中包含的 mib 树形结构子节点个数 */
         netsnmp_variable_list **bulkcache;
-        int             treecache_len;  /* length of cache array */
+
+		int             treecache_len;  /* length of cache array */
         int             treecache_num;  /* number of current cache entries */
         netsnmp_cachemap *cache_store;
         int             vbcount;

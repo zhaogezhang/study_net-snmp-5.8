@@ -754,6 +754,16 @@ netsnmp_subtree_split(netsnmp_subtree *current, oid name[], int name_len)
  *
  *  @return gives MIB_REGISTERED_OK on success, error code otherwise.
  */
+/*********************************************************************************************************
+** 函数名称: netsnmp_subtree_load
+** 功能描述: 把指定的子树结构添加到指定上下文中的 oid 属性结构上
+** 输	 入: new_sub - 指定的子树结构指针
+**         : context_name - 指定的子树上下文环境指针
+** 输	 出: MIB_REGISTERED_OK - 注册成功
+**         : other - 注册失败错误码
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 netsnmp_subtree_load(netsnmp_subtree *new_sub, const char *context_name)
 {
@@ -1118,6 +1128,29 @@ netsnmp_subtree_find(const oid *name, size_t len, netsnmp_subtree *subtree,
  *  @see register_agentx_list()
  *  @see netsnmp_handler_registration_free()
  */
+/*********************************************************************************************************
+** 函数名称: netsnmp_register_mib
+** 功能描述: 根据函数参数向当前系统内注册一个 mib 子树节点
+** 输	 入: moduleName - 指定的模块名
+**         : var - 指定的 variables array 指针
+**         : varsize - 指定的 variables array 成员大小
+**         : numvars - 指定的 variables array 成员个数
+**         : mibloc - 指定的子树节点 oid 前缀，确定在 mib 树形结构上的位置
+**         : mibloclen - 指定的子树节点 oid 前缀数据长度
+**         : priority - 指定的子树节点优先级
+**         : range_subid - 指定的子树节点 oid 下边界
+**         : range_ubound - 指定的子树节点 oid 上边界
+**         : ss -  指定的子树节点会话指针
+**         : context - 指定的子树节点上下文信息
+**         : timeout - 指定的子树节点超时信息
+**         : flags - 指定的子树节点 flags 信息
+**         : reginfo - 指定的节点对象指针
+**         : perform_callback - 注册成功后是否需要调用 SNMPD_CALLBACK_REGISTER_OID 回调函数
+** 输	 出: SNMPERR_SUCCESS - 注册成功
+**         : SNMP_ERR_* - 注册失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 netsnmp_register_mib(const char *moduleName,
                      struct variable *var,
@@ -1214,7 +1247,7 @@ netsnmp_register_mib(const char *moduleName,
     res = netsnmp_subtree_load(subtree, context);
 
     /*  If registering a range, use the first subtree as a template for the
-	rest of the range.  */
+		rest of the range.  */
 
     if (res == MIB_REGISTERED_OK && range_subid != 0) {
         int i;
@@ -1245,7 +1278,7 @@ netsnmp_register_mib(const char *moduleName,
                 unregister_mib_context(mibloc, mibloclen, priority,
                                        range_subid, range_ubound, context);
                 netsnmp_remove_subtree(sub2);
-		netsnmp_subtree_free(sub2);
+				netsnmp_subtree_free(sub2);
                 netsnmp_set_lookup_cache_size(old_lookup_cache_val);
                 invalidate_lookup_cache(context);
                 return res;
@@ -2089,6 +2122,16 @@ in_a_view(oid *name, size_t *namelen, netsnmp_pdu *pdu, int type)
  *               VACM_SUBTREE_UNKNOWN if some portions are accessible
  *               other codes may returned on error
  */
+/*********************************************************************************************************
+** 函数名称: check_access
+** 功能描述: 校验并判断指定的 pdu 请求是否可以成功执行
+** 输	 入: pdu - 指定的 pdu 数据包指针
+** 输	 出: 0 - 可以成功执行
+**         : 1 - 不支持的协议版本
+**         : view_parms.errorcode - 错误码
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 check_access(netsnmp_pdu *pdu)
 {                               /* IN - pdu being checked */

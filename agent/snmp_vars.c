@@ -242,6 +242,14 @@ int             callback_master_num = -1;
 #ifdef NETSNMP_TRANSPORT_CALLBACK_DOMAIN
 netsnmp_session *callback_master_sess = NULL;
 
+/*********************************************************************************************************
+** 函数名称: _init_agent_callback_transport
+** 功能描述: 为当前 snmp 系统注册处理接收数据包的处理函数
+** 输	 入: 
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 static void
 _init_agent_callback_transport(void)
 {
@@ -255,6 +263,14 @@ _init_agent_callback_transport(void)
         callback_master_num = callback_master_sess->local_port;
 }
 #else
+/*********************************************************************************************************
+** 函数名称: _init_agent_callback_transport
+** 功能描述: 为当前 snmp 系统注册处理接收数据包的处理函数
+** 输	 入: 
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 #define _init_agent_callback_transport()
 #endif
 
@@ -270,6 +286,15 @@ _init_agent_callback_transport(void)
  *
  * @see init_snmp
  */
+/*********************************************************************************************************
+** 函数名称: init_agent
+** 功能描述: 初始化指定的 agent
+** 输	 入: app - 指定的配置文件名
+** 输	 出: 0 - 初始化成功
+**         : other - 初始化失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 init_agent(const char *app)
 {
@@ -306,6 +331,7 @@ init_agent(const char *app)
     auto_nlist_print_tree(-2, 0);
 #endif
 
+    /* 为当前 snmp 系统注册处理接收数据包的处理函数 */
     _init_agent_callback_transport();
 
 #ifndef NETSNMP_FEATURE_REMOVE_RUNTIME_DISABLE_VERSION
@@ -317,6 +343,8 @@ init_agent(const char *app)
     netsnmp_init_helpers();
     init_traps();
     netsnmp_container_init_list();
+
+	/* 向当前系统内注册和 sysORTable 相关的回调函数，用来注册或注销 sysORTable */
     init_agent_sysORTable();
 
 #if defined(USING_AGENTX_SUBAGENT_MODULE) || defined(USING_AGENTX_MASTER_MODULE)

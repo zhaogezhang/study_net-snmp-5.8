@@ -74,6 +74,15 @@ netsnmp_num_file_instance_deref(netsnmp_num_file_instance *nfi)
  * @return Returns a pointer to a netsnmp_mib_handler struct which contains
  *	the handler's name and the access method
  */
+/*********************************************************************************************************
+** 函数名称: netsnmp_get_instance_handler
+** 功能描述: 根据函数参数创建并初始化一个 instance mib handler 结构
+** 输	 入: name - 指定的 mib handler 名字
+**         : handler_access_method - 指定的 mib handler 访问数据方法
+** 输	 出: ret - 创建并初始化的 instance mib handler 结构指针
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 netsnmp_mib_handler *
 netsnmp_get_instance_handler(void)
 {

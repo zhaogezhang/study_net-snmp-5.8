@@ -178,7 +178,19 @@ netsnmp_callback_fmtaddr(netsnmp_transport *t, const void *data, int len)
  * to your send function if you like.  For instance, you might want to
  * remember where a PDU came from, so that you can send a reply there...  
  */
-
+/*********************************************************************************************************
+** 函数名称: netsnmp_callback_recv
+** 功能描述: 当前系统中基于回调函数机制的传输通道的接收数据函数
+** 输	 入: t - 指定的传输通道指针
+**         : buf - 指定的接收数据缓冲区
+**         : size - 指定的接收数据缓冲区长度
+**         : opaque - 指定的不透明数据指针
+**         : olength - 指定的不透明数据长度
+** 输	 出:   0 - 发送成功
+**         : -1 - 发送失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 netsnmp_callback_recv(netsnmp_transport *t, void *buf, int size,
 		      void **opaque, int *olength)
@@ -218,8 +230,19 @@ netsnmp_callback_recv(netsnmp_transport *t, void *buf, int size,
     return rc;
 }
 
-
-
+/*********************************************************************************************************
+** 函数名称: netsnmp_callback_send
+** 功能描述: 当前系统中基于回调函数机制的传输通道的发送数据函数
+** 输	 入: t - 指定的传输通道指针
+**         : buf - 指定的待发送数据缓冲区
+**         : size - 指定的待发送数据缓冲区长度
+**         : opaque - 指定的不透明数据指针
+**         : olength - 指定的不透明数据长度
+** 输	 出:   0 - 发送成功
+**         : -1 - 发送失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 netsnmp_callback_send(netsnmp_transport *t, const void *buf, int size,
 		      void **opaque, int *olength)
@@ -365,7 +388,15 @@ netsnmp_callback_accept(netsnmp_transport *t)
  * (and we make up a temporary name for the local end of the
  * connection).  
  */
-
+/*********************************************************************************************************
+** 函数名称: netsnmp_callback_transport
+** 功能描述: 为指定的文件描述符创建并初始化一个基于回调函数机制的传输通道结构
+** 输	 入: to - 指定的文件描述符
+** 输	 出: t - 创建并初始化的传输通道结构指针
+**         : NULL - 创建并初始化失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 netsnmp_transport *
 netsnmp_callback_transport(int to)
 {
@@ -560,6 +591,18 @@ netsnmp_callback_create_pdu(netsnmp_transport *transport,
     return pdu;
 }
 
+/*********************************************************************************************************
+** 函数名称: netsnmp_callback_open
+** 功能描述: 根据函数参数为指定的文件描述符创建并初始化一个基于回调函数机制的会话窗口
+** 输	 入: attach_to - 指定的文件描述符
+**         : return_func - 指定的用来解析接收数据包的函数指针
+**         : fpre_parse - 指定的 pre 钩子函数指针
+**         : fpost_parse - 指定的 post 钩子函数指针
+** 输	 出: callback_ss - 会话窗口指针
+**         : NULL - 执行失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 netsnmp_session *
 netsnmp_callback_open(int attach_to,
                       int (*return_func) (int op,
@@ -575,8 +618,12 @@ netsnmp_callback_open(int attach_to,
     netsnmp_session callback_sess, *callback_ss;
     netsnmp_transport *callback_tr;
 
+    /* 为指定的文件描述符创建并初始化一个基于回调函数机制的传输通道结构 */
     callback_tr = netsnmp_callback_transport(attach_to);
+
+	/* 初始化指定的窗口结构指针 */
     snmp_sess_init(&callback_sess);
+	
     callback_sess.callback = return_func;
     if (attach_to) {
         /*

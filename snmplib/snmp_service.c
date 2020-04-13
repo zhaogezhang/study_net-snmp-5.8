@@ -55,6 +55,15 @@ struct netsnmp_lookup_domain {
 
 static struct netsnmp_lookup_domain* domains = NULL;
 
+/*********************************************************************************************************
+** 函数名称: netsnmp_register_default_domain
+** 功能描述: 向当前系统内注册指定参数的 domain 
+** 输	 入: application - 指定的应用程序名
+**         : domain - 指定的 domain 名
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 netsnmp_register_default_domain(const char* application, const char* domain)
 {

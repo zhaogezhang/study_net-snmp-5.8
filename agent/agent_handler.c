@@ -112,6 +112,15 @@ static netsnmp_mib_handler *_clone_handler(netsnmp_mib_handler *it);
  *  @see netsnmp_create_handler_registration()
  *  @see netsnmp_register_handler()
  */
+/*********************************************************************************************************
+** 函数名称: netsnmp_create_handler
+** 功能描述: 根据函数参数创建并初始化一个 mib handler 结构
+** 输	 入: name - 指定的 mib handler 名字
+**         : handler_access_method - 指定的 mib handler 访问数据方法
+** 输	 出: ret - 创建并初始化的 mib handler 结构指针
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 netsnmp_mib_handler *
 netsnmp_create_handler(const char *name,
                        Netsnmp_Node_Handler * handler_access_method)
@@ -220,6 +229,18 @@ netsnmp_handler_registration_create(const char *name,
  *  @see netsnmp_create_handler()
  *  @see netsnmp_handler_registration_create()
  */
+/*********************************************************************************************************
+** 函数名称: netsnmp_create_handler_registration
+** 功能描述: 根据函数指定的参数创建并初始化一个 net-snmp 对象节点数据处理成员结构
+** 输	 入: name - 对象节点名
+**         : handler_access_method - 操作对象节点的函数指针
+**         : reg_oid - 对象的 oid 数据指针
+**         : reg_oid_len - 对象的 oid 数据长度
+**         : modes - 对象的权限模式
+** 输	 出: rv - 创建并初始化的 net-snmp 对象节点指针
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 netsnmp_handler_registration *
 netsnmp_create_handler_registration(const char *name,
                                     Netsnmp_Node_Handler *
@@ -253,6 +274,15 @@ netsnmp_create_handler_registration(const char *name,
  *  @see netsnmp_create_handler_registration()
  *  @see netsnmp_register_mib()
  */
+/*********************************************************************************************************
+** 函数名称: netsnmp_register_handler
+** 功能描述: 向当前系统内注册一个 net-snmp 对象节点
+** 输	 入: reginfo - 指定的 net-snmp 对象指针
+** 输	 出: SNMPERR_SUCCESS - 注册成功
+**         : SNMP_ERR_* - 注册失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 netsnmp_register_handler(netsnmp_handler_registration *reginfo)
 {
@@ -420,6 +450,17 @@ netsnmp_register_handler_nocallback(netsnmp_handler_registration *reginfo)
  *  @see netsnmp_create_handler_registration()
  *  @see netsnmp_inject_handler()
  */
+/*********************************************************************************************************
+** 函数名称: netsnmp_inject_handler
+** 功能描述: 向当前系统的函数处理调用链的指定位置注册一个新的对象节点成员
+** 输	 入: reginfo - 指定的对象节点指针
+**         : handler - 指定的 mib 对象节点数据处理结构指针
+**         : before_what - 指定的插入位置，NULL 表示插入到链表头
+** 输	 出: SNMPERR_SUCCESS - 注册成功
+**         : SNMP_ERR_* - 注册失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 netsnmp_inject_handler_before(netsnmp_handler_registration *reginfo,
                               netsnmp_mib_handler *handler,
@@ -460,7 +501,7 @@ netsnmp_inject_handler_before(netsnmp_handler_registration *reginfo,
 	    for (nexth = reginfo->handler; nexth; nexth = nexth->next)
 		snmp_log(LOG_ERR, "  %s\n", nexth->handler_name);
             return SNMP_ERR_GENERR;
-	}
+		}
         if (prevh) {
             /* after prevh and before nexth */
             prevh->next = handler;
@@ -487,6 +528,16 @@ netsnmp_inject_handler_before(netsnmp_handler_registration *reginfo,
  *  @see netsnmp_create_handler_registration()
  *  @see netsnmp_inject_handler_before()
  */
+/*********************************************************************************************************
+** 函数名称: netsnmp_inject_handler
+** 功能描述: 向指定的对象节点的调用链中注册一个新的对象节点成员
+** 输	 入: reginfo - 指定的对象节点指针
+**         : handler - 指定的 mib 对象节点数据处理结构指针
+** 输	 出: SNMPERR_SUCCESS - 注册成功
+**         : SNMP_ERR_* - 注册失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 netsnmp_inject_handler(netsnmp_handler_registration *reginfo,
                        netsnmp_mib_handler *handler)

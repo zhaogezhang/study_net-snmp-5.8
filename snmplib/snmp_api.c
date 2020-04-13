@@ -754,6 +754,14 @@ _init_snmp(void)
  * May perform one time minimal library initialization.
  * No MIB file processing is done via this call.
  */
+/*********************************************************************************************************
+** 函数名称: snmp_sess_init
+** 功能描述: 初始化指定的窗口结构指针
+** 输	 入: session - 指定的窗口结构指针
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 void
 snmp_sess_init(netsnmp_session * session)
 {
@@ -5222,6 +5230,16 @@ _build_initial_pdu_packet(struct session_list *slp, netsnmp_pdu *pdu, int bulk)
  *   Zero (0) is returned.
  *   The caller must call snmp_free_pdu if 0 is returned.
  */
+/*********************************************************************************************************
+** 函数名称: snmp_send
+** 功能描述: 通过指定的会话发送指定的 pdu 数据包
+** 输	 入: session - 指定的会话指针
+**         : pdu - 指定的 pdu 数据包
+** 输	 出: request id of pdu - 发送成功
+**         : 0 - 发送失败
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 snmp_send(netsnmp_session * session, netsnmp_pdu *pdu)
 {
@@ -5710,9 +5728,9 @@ _sess_process_packet_handle_pdu(void *sessp, netsnmp_session * sp,
 	  break;
 	}
       } else {
-	if (rp->request_id != pdu->reqid) {
-	  continue;
-	}
+		if (rp->request_id != pdu->reqid) {
+		  continue;
+		}
       }
 
       if (rp->callback) {
@@ -6932,6 +6950,19 @@ snmp_oid_ncompare(const oid * in_name1,
  *
  * @return -1 if name1 < name2, 0 if name1 = name2, 1 if name1 > name2
  */
+/*********************************************************************************************************
+** 函数名称: snmp_oid_compare
+** 功能描述: 比较指定的两个 oid 的内容是否相同
+** 输	 入: in_name1 - 第一个 oid 数据
+**         : len1 - 第一个 oid 数据长度
+**         : in_name2 - 第二个 oid 数据
+**         : len2 - 第二个 oid 数据长度
+** 输	 出: -1 - name1 < name2
+**         :  0 - name1 = name2
+**         :  1 - name1 > name2
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 snmp_oid_compare(const oid * in_name1,
                  size_t len1, const oid * in_name2, size_t len2)

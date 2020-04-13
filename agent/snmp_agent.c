@@ -1560,7 +1560,15 @@ shutdown_master_agent(void)
 #endif /* NETSNMP_NO_PDU_STATS */
 }
 
-
+/*********************************************************************************************************
+** 函数名称: init_agent_snmp_session
+** 功能描述: 根据函数指定的参数创建并初始化一个 agent 会话窗口结构
+** 输	 入: session - 指定的会话指针
+**         : pdu - 指定的数据单元结构指针
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 netsnmp_agent_session *
 init_agent_snmp_session(netsnmp_session * session, netsnmp_pdu *pdu)
 {
@@ -2120,6 +2128,14 @@ dump_sess_list(void)
 }
 #endif /* NETSNMP_FEATURE_REMOVE_DUMP_SESS_LIST */
 
+/*********************************************************************************************************
+** 函数名称: netsnmp_remove_and_free_agent_snmp_session
+** 功能描述: 移除指定的 agent 会话并释相关资源
+** 输	 入: asp - 指定的 agent 会话指针
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 void
 netsnmp_remove_and_free_agent_snmp_session(netsnmp_agent_session *asp)
 {
@@ -2171,6 +2187,18 @@ netsnmp_free_agent_snmp_session_by_session(netsnmp_session * sess,
 #endif /* NETSNMP_FEATURE_REMOVE_FREE_AGENT_SNMP_SESSION_BY_SESSION */
 
 /** handles an incoming SNMP packet into the agent */
+/*********************************************************************************************************
+** 函数名称: handle_snmp_packet
+** 功能描述: 用来处理接收到的所有 snmp 数据包
+** 输	 入: op - 数据包处理操作码
+**         : session - 接收到数据包的会话指针
+**         : reqid - 请求 id
+**         : pdu - 接收到的 pdu 数据包指针
+**         : magic - 指定的 agent 会话结构指针
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 handle_snmp_packet(int op, netsnmp_session * session, int reqid,
                    netsnmp_pdu *pdu, void *magic)
@@ -2976,6 +3004,14 @@ netsnmp_check_all_requests_status(netsnmp_agent_session *asp,
     return asp->status;
 }
 
+/*********************************************************************************************************
+** 函数名称: handle_var_requests
+** 功能描述: 处理指定的 agent 会话上接收到的 snmp 请求数据包
+** 输	 入: asp - 指定的 agent 会话指针
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 handle_var_requests(netsnmp_agent_session *asp)
 {
@@ -2989,6 +3025,7 @@ handle_var_requests(netsnmp_agent_session *asp)
     /*
      * now, have the subtrees in the cache go search for their results 
      */
+    /* 遍历当前会话中包含的所有 mib 子树结构，查找和 snmp 请求匹配的 oid 并调用相应的处理函数 */
     for (i = 0; i <= asp->treecache_num; i++) {
         /*
          * don't call handlers w/null reginfo.
@@ -3039,7 +3076,7 @@ handle_var_requests(netsnmp_agent_session *asp)
          */
         if (retstatus != SNMP_ERR_NOERROR) {
             status = retstatus;
-	}
+		}
 
         /*
          * other things we know less about (no index) 
@@ -3504,6 +3541,14 @@ handle_getnext_loop(netsnmp_agent_session *asp)
 }
 
 #ifndef NETSNMP_NO_WRITE_SUPPORT
+/*********************************************************************************************************
+** 函数名称: handle_set
+** 功能描述: 处理指定的 agent 会话上接收到的写请求数据包
+** 输	 入: asp - 指定的 agent 会话指针
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 handle_set(netsnmp_agent_session *asp)
 {
@@ -3587,6 +3632,14 @@ handle_set(netsnmp_agent_session *asp)
     return asp->status;
 }
 
+/*********************************************************************************************************
+** 函数名称: handle_set_loop
+** 功能描述: 处理指定的 agent 会话上接收到的写请求数据包
+** 输	 入: asp - 指定的 agent 会话指针
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 handle_set_loop(netsnmp_agent_session *asp)
 {
@@ -3603,6 +3656,15 @@ handle_set_loop(netsnmp_agent_session *asp)
 }
 #endif /* NETSNMP_NO_WRITE_SUPPORT */
 
+/*********************************************************************************************************
+** 函数名称: netsnmp_agent_session
+** 功能描述: 处理指定的 agent 会话上接收到的 pdu 请求数据包
+** 输	 入: asp - 指定的 agent 会话指针
+**         : status - 指定的 agent 会话状态
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 netsnmp_handle_request(netsnmp_agent_session *asp, int status)
 {
@@ -3708,6 +3770,14 @@ netsnmp_handle_request(netsnmp_agent_session *asp, int status)
     return 1;
 }
 
+/*********************************************************************************************************
+** 函数名称: handle_pdu
+** 功能描述: 处理指定的 agent 会话上接收到的 pdu 请求数据包
+** 输	 入: asp - 指定的 agent 会话指针
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 handle_pdu(netsnmp_agent_session *asp)
 {

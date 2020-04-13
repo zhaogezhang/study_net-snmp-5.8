@@ -32,6 +32,14 @@
 /** returns a serialize handler that can be injected into a given
  *  handler chain.  
  */
+/*********************************************************************************************************
+** 函数名称: netsnmp_get_serialize_handler
+** 功能描述: 根据函数参数创建并初始化一个 serialize mib handler 结构
+** 输	 入: 
+** 输	 出: ret - 创建并初始化的 serialize mib handler 结构指针
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 netsnmp_mib_handler *
 netsnmp_get_serialize_handler(void)
 {
