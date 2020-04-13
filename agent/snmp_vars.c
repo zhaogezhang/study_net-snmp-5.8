@@ -390,6 +390,7 @@ init_agent(const char *app)
         return r;
 #endif
 
+   /* 初始化当前当前系统内和 agent 相关的功能模块 */  
 #  include "agent_module_inits.h"
 
     return r;

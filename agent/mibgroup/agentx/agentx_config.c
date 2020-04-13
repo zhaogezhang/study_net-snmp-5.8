@@ -169,6 +169,14 @@ agentx_unregister_config_handler(const char *token)
 }
 #endif /* NETSNMP_FEATURE_REMOVE_AGENTX_UNREGISTER_CONFIG_HANDLER */
 
+/*********************************************************************************************************
+** 函数名称: agentx_config_init
+** 功能描述: 从配置文件中获取和 agentx 相关的配置信息
+** 输	 入: 
+** 输	 出:
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 void
 agentx_config_init(void)
 {

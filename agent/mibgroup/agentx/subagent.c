@@ -92,6 +92,14 @@ static struct agent_netsnmp_set_info *Sets = NULL;
 
 netsnmp_session *agentx_callback_sess = NULL;
 
+/*********************************************************************************************************
+** 函数名称: subagent_startup
+** 功能描述: 当前系统 agentx 子代理的启动初始化函数
+** 输	 入: 
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 subagent_startup(int majorID, int minorID,
                              void *serverarg, void *clientarg)
@@ -139,7 +147,7 @@ static int subagent_init_init = 0;
  */
 /*********************************************************************************************************
 ** 函数名称: subagent_init
-** 功能描述: 为当前 snmp 系统初始化子代理并连接到主代理上
+** 功能描述: 为当前 snmp 系统初始化 agentx 子代理并连接到主代理上
 ** 输	 入: 
 ** 输	 出:   0 - 执行成功
 **         : -1 - 执行失败
@@ -847,6 +855,14 @@ agentx_unregister_callbacks(netsnmp_session * ss)
 /*
  * Open a session to the master agent.  
  */
+/*********************************************************************************************************
+** 函数名称: subagent_open_master_session
+** 功能描述: 为 agentx 子代理和 agent 主代理创建一个会话窗口
+** 输	 入: 
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 int
 subagent_open_master_session(void)
 {
@@ -870,6 +886,7 @@ subagent_open_master_session(void)
     sess.callback = handle_agentx_packet;
     sess.authenticator = NULL;
 
+    /* 获取配置文件中指定的 agentx socket 通信地址信息 */
     agentx_socket = netsnmp_ds_get_string(NETSNMP_DS_APPLICATION_ID,
                                           NETSNMP_DS_AGENT_X_SOCKET);
     t = netsnmp_transport_open_client("agentx", agentx_socket);

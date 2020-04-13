@@ -74,6 +74,14 @@ proxyOptProc(int argc, char *const *argv, int opt)
     }
 }
 
+/*********************************************************************************************************
+** 函数名称: proxy_parse_config
+** 功能描述: 根据配置文件指定的参数创建并初始化 ucd_proxy 会话
+** 输	 入: 
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 void
 proxy_parse_config(const char *token, char *line)
 {
@@ -111,6 +119,7 @@ proxy_parse_config(const char *token, char *line)
         return;
     }
 
+    /* 根据配置文件为当前 ucd proxy 创建参数结构 */
     for (argn = 1, cp = line; cp && argn < MAX_ARGS;) {
         /* Copy a parameter into the buff */
         cp = copy_nword(cp, buff, strlen(cp)+1);
@@ -370,6 +379,14 @@ proxy_free_filled_in_session_args(netsnmp_session *session, void **configured)
     *configured = NULL;
 }
 
+/*********************************************************************************************************
+** 函数名称: init_proxy
+** 功能描述: 初始化当前系统的 ucd_proxy 功能模块
+** 输	 入: 
+** 输	 出: 
+** 全局变量: 
+** 调用模块: 
+*********************************************************************************************************/
 void
 init_proxy(void)
 {
